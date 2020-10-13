@@ -91,9 +91,8 @@ class HttpServer():
         if path.endswith('/'):
             return b"text/plain"
         else:
-            types = mimetypes.guess_type(url, strict=True)
-            result = '/'.join(types).enconde('utf-8')
-            return result
+            result = mimetypes.guess_type(path, strict=True)
+            return result[0].encode('utf-8')
 
     @staticmethod
     def get_content(path):
@@ -128,8 +127,20 @@ class HttpServer():
             # The file `webroot/a_page_that_doesnt_exist.html`) doesn't exist,
             # so this should raise a FileNotFoundError.
         """
-
-        return b"Not implemented!"  # TODO: Complete this function.
+        new_path = 'webroot' + path
+        if os.path.exists(new_path):
+            if os.path.isdir(new_path):
+                return [x.encode('utf-8') for x in os.listdir(new_path)]
+            if os.path.isfile(new_path):
+                result = b""
+                with open(new_path, 'rb') as f:
+                    data = f.read(16) # chose a buffer size of 16
+                    while data:
+                        result += data
+                        data = f.read(16)
+                return result
+        else:
+            raise FileNotFoundError
 
     def __init__(self, port):
         self.port = port
