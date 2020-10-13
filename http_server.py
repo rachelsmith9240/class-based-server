@@ -54,8 +54,11 @@ class HttpServer():
 
         Then you would return "/images/sample_1.png"
         """
-
-        return "TODO: COMPLETE THIS"  # TODO
+        cwd = os.getcwd()
+        cwd += '/webroot'
+        result = request.split(' ')
+        result = result[1] # add CWD
+        return result
 
 
     @staticmethod
@@ -88,7 +91,9 @@ class HttpServer():
         if path.endswith('/'):
             return b"text/plain"
         else:
-            return b"TODO: FINISH THE REST OF THESE CASES"  # TODO
+            types = mimetypes.guess_type(url, strict=True)
+            result = '/'.join(types).enconde('utf-8')
+            return result
 
     @staticmethod
     def get_content(path):
